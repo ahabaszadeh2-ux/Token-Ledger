@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دفتر معاملات | مدیریت حساب توکن</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#0b1210;
+    --bg-panel:#101c19;
+    --bg-panel-2:#0d1815;
+    --line:#1f3530;
+    --line-soft:#182a26;
+    --gold:#d4af6a;
+    --gold-soft:#e8cd94;
+    --emerald:#3ecf8e;
+    --red:#ef6a5f;
+    --text-hi:#eef3f0;
+    --text-mid:#a9beb6;
+    --text-low:#6e8880;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Vazirmatn', Tahoma, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(212,175,106,0.07), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(62,207,142,0.06), transparent 60%),
+      var(--bg-deep);
+    color:var(--text-hi);
+    font-family:var(--sans);
+    min-height:100vh;
+    padding:28px 32px 60px;
+    user-select:none;
+  }
+  input, .search{ user-select:text; }
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  /* header */
+  header{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    border-bottom:1px solid var(--line);
+    padding-bottom:22px;margin-bottom:26px;
+    flex-wrap:wrap;gap:16px;
+  }
+  .brand-eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:2px;
+    color:var(--gold);text-transform:uppercase;margin-bottom:6px;
+  }
+  h1{
+    font-size:28px;font-weight:800;margin:0;letter-spacing:-0.3px;
+  }
+  .subtitle{color:var(--text-mid);font-size:13.5px;margin-top:6px;}
+  .ledger-mark{
+    font-family:var(--mono);font-size:12px;color:var(--text-low);
+    text-align:left;line-height:1.7;
+  }
+  .ledger-mark b{color:var(--gold-soft);}
+  .storage-line{margin-top:4px;display:flex;align-items:center;gap:8px;justify-content:flex-end;}
+  .storage-line .path{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:left;}
+  .link-btn{
+    background:none;border:none;color:var(--gold-soft);font-family:var(--mono);
+    font-size:11px;cursor:pointer;text-decoration:underline;padding:0;
+  }
+  .link-btn:hover{color:var(--gold);}
+
+  /* summary strip */
+  .summary{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+    background:var(--line);border:1px solid var(--line);
+    border-radius:10px;overflow:hidden;margin-bottom:28px;
+  }
+  .stat{
+    background:var(--bg-panel);padding:18px 20px;position:relative;
+  }
+  .stat .label{font-size:11.5px;color:var(--text-low);font-family:var(--mono);letter-spacing:.5px;}
+  .stat .value{font-size:22px;font-weight:700;margin-top:8px;font-family:var(--mono);}
+  .stat.pos .value{color:var(--emerald);}
+  .stat.neg .value{color:var(--red);}
+  .stat .value small{font-size:12px;color:var(--text-low);font-weight:500;margin-right:4px;}
+
+  /* form panel */
+  .panel{
+    background:var(--bg-panel);border:1px solid var(--line);
+    border-radius:12px;padding:22px 24px;margin-bottom:26px;
+  }
+  .panel-title{
+    font-size:13px;color:var(--gold-soft);font-family:var(--mono);
+    letter-spacing:1px;margin-bottom:16px;display:flex;align-items:center;gap:8px;
+  }
+  .panel-title::before{content:"◆";font-size:10px;color:var(--gold);}
+  form.entry{
+    display:grid;grid-template-columns:1.1fr 0.85fr 0.85fr 0.75fr 0.85fr 0.85fr auto;gap:12px;align-items:end;
+  }
+  .field{position:relative;}
+  .field label{
+    display:block;font-size:11.5px;color:var(--text-mid);margin-bottom:6px;font-family:var(--mono);
+  }
+  .field input{
+    width:100%;background:var(--bg-panel-2);border:1px solid var(--line-soft);
+    border-radius:8px;padding:10px 12px;color:var(--text-hi);font-family:var(--sans);
+    font-size:14px;transition:border-color .15s;
+  }
+  .field input:focus{outline:none;border-color:var(--gold);}
+  .field input[type="number"]{font-family:var(--mono);}
+  .field input.date-display{cursor:pointer;font-family:var(--mono);caret-color:transparent;}
+  .field input.date-display::placeholder{color:var(--text-low);}
+  .btn{
+    border:none;border-radius:8px;padding:10px 18px;font-family:var(--sans);
+    font-size:14px;font-weight:600;cursor:pointer;transition:filter .15s, transform .1s;
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:var(--gold);color:#1a1006;}
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-ghost{
+    background:transparent;color:var(--text-mid);border:1px solid var(--line-soft);
+  }
+  .btn-ghost:hover{color:var(--text-hi);border-color:var(--text-low);}
+  .btn-danger{background:transparent;color:var(--red);border:1px solid rgba(239,106,95,0.3);}
+  .btn-danger:hover{background:rgba(239,106,95,0.08);}
+
+  .toolbar{
+    display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:12px;flex-wrap:wrap;
+  }
+  .search{
+    background:var(--bg-panel-2);border:1px solid var(--line-soft);border-radius:8px;
+    padding:9px 14px;color:var(--text-hi);font-family:var(--sans);font-size:13.5px;min-width:220px;
+  }
+  .search:focus{outline:none;border-color:var(--gold);}
+  .toolbar-actions{display:flex;gap:8px;flex-wrap:wrap;}
+
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  thead th{
+    text-align:right;padding:12px 14px;font-family:var(--mono);font-size:11px;
+    letter-spacing:1px;color:var(--text-low);border-bottom:1px solid var(--line);
+    text-transform:uppercase;white-space:nowrap;
+  }
+  thead th.num, tbody td.num{text-align:left;font-family:var(--mono);}
+  tbody td{padding:13px 14px;border-bottom:1px solid var(--line-soft);vertical-align:middle;}
+  tbody tr{transition:background .12s;}
+  tbody tr:hover{background:rgba(212,175,106,0.035);}
+  .row-idx{color:var(--text-low);font-family:var(--mono);}
+  .token-name{font-weight:700;color:var(--text-hi);}
+  .token-name .dot{
+    display:inline-block;width:6px;height:6px;border-radius:50%;
+    background:var(--gold);margin-left:8px;
+  }
+  .date-cell{color:var(--text-mid);font-family:var(--mono);font-size:13px;}
+  .price{font-family:var(--mono);}
+  .pl-cell{font-family:var(--mono);font-weight:700;}
+  .pl-pos{color:var(--emerald);}
+  .pl-neg{color:var(--red);}
+  .pl-open{color:var(--text-low);font-weight:500;font-style:normal;}
+  .pct{font-size:11.5px;margin-right:6px;opacity:0.75;}
+  .hold-days{display:block;font-size:10.5px;color:var(--text-low);font-family:var(--mono);margin-top:2px;}
+  .row-actions{display:flex;gap:6px;justify-content:left;}
+  .icon-btn{
+    background:none;border:none;cursor:pointer;color:var(--text-low);
+    padding:4px 6px;border-radius:6px;font-size:13px;transition:color .12s,background .12s;
+  }
+  .icon-btn:hover{color:var(--gold-soft);background:rgba(212,175,106,0.08);}
+  .icon-btn.del:hover{color:var(--red);background:rgba(239,106,95,0.08);}
+
+  .empty-state{
+    text-align:center;padding:60px 20px;color:var(--text-low);
+  }
+  .empty-state .glyph{font-size:32px;margin-bottom:12px;opacity:.5;}
+  .empty-state b{color:var(--text-mid);}
+
+  footer{
+    margin-top:30px;text-align:center;color:var(--text-low);
+    font-size:12px;font-family:var(--mono);
+  }
+
+  /* ---- Date picker popup ---- */
+  .datepicker-popup{
+    position:absolute;top:calc(100% + 6px);right:0;z-index:50;
+    background:var(--bg-panel-2);border:1px solid var(--gold);border-radius:10px;
+    padding:12px;width:260px;box-shadow:0 12px 30px rgba(0,0,0,0.5);
+    display:none;
+  }
+  .datepicker-popup.open{display:block;}
+  .dp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .dp-head .dp-title{font-family:var(--mono);font-size:13px;color:var(--gold-soft);}
+  .dp-nav{background:none;border:1px solid var(--line-soft);color:var(--text-mid);
+    border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:13px;}
+  .dp-nav:hover{color:var(--gold);border-color:var(--gold);}
+  .dp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+  .dp-dow{text-align:center;font-size:10.5px;color:var(--text-low);font-family:var(--mono);padding:4px 0;}
+  .dp-day{
+    text-align:center;font-size:12.5px;padding:7px 0;border-radius:6px;cursor:pointer;
+    font-family:var(--mono);color:var(--text-mid);
+  }
+  .dp-day:hover{background:rgba(212,175,106,0.15);color:var(--gold-soft);}
+  .dp-day.muted{color:var(--line-soft);cursor:default;}
+  .dp-day.muted:hover{background:none;color:var(--line-soft);}
+  .dp-day.today{outline:1px solid var(--text-low);}
+  .dp-day.selected{background:var(--gold);color:#1a1006;font-weight:700;}
+  .dp-clear{margin-top:8px;width:100%;text-align:center;font-size:11.5px;color:var(--text-low);
+    background:none;border:1px dashed var(--line-soft);border-radius:6px;padding:6px;cursor:pointer;}
+  .dp-clear:hover{color:var(--red);border-color:var(--red);}
+
+  /* ---- Modal ---- */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(4,8,7,0.72);backdrop-filter:blur(2px);
+    display:none;align-items:center;justify-content:center;z-index:100;padding:20px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-box{
+    background:var(--bg-panel);border:1px solid var(--red);border-radius:12px;
+    padding:24px 26px;max-width:420px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,0.6);
+  }
+  .modal-box h3{margin:0 0 10px;font-size:17px;color:var(--red);display:flex;align-items:center;gap:8px;}
+  .modal-box p{color:var(--text-mid);font-size:13.5px;line-height:1.8;margin:0 0 14px;}
+  .modal-box .confirm-word{color:var(--gold-soft);font-family:var(--mono);font-weight:700;}
+  .modal-box input{
+    width:100%;background:var(--bg-panel-2);border:1px solid var(--line-soft);border-radius:8px;
+    padding:10px 12px;color:var(--text-hi);font-family:var(--mono);font-size:14px;margin-bottom:16px;
+  }
+  .modal-box input:focus{outline:none;border-color:var(--red);}
+  .modal-box.gold{border-color:var(--gold);}
+  .modal-box.gold h3{color:var(--gold-soft);}
+  .modal-box.gold input:focus{border-color:var(--gold);}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;}
+
+  /* ---- Login popup ---- */
+  .login-overlay{
+    position:fixed;inset:0;z-index:200;
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(212,175,106,0.08), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(62,207,142,0.07), transparent 60%),
+      var(--bg-deep);
+    display:none;align-items:center;justify-content:center;padding:20px;
+  }
+  .login-overlay.open{display:flex;}
+  .login-box{
+    background:var(--bg-panel);border:1px solid var(--gold);border-radius:14px;
+    padding:32px 30px;max-width:360px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  }
+  .login-box .login-eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--gold);
+    text-transform:uppercase;text-align:center;margin-bottom:6px;
+  }
+  .login-box h3{
+    margin:0 0 22px;font-size:18px;color:var(--text-hi);text-align:center;font-weight:700;
+  }
+  .login-field{margin-bottom:14px;}
+  .login-field label{
+    display:block;font-size:11.5px;color:var(--text-mid);margin-bottom:6px;font-family:var(--mono);
+  }
+  .login-field input{
+    width:100%;background:var(--bg-panel-2);border:1px solid var(--line-soft);
+    border-radius:8px;padding:11px 12px;color:var(--text-hi);font-family:var(--sans);
+    font-size:14px;transition:border-color .15s;
+  }
+  .login-field input:focus{outline:none;border-color:var(--gold);}
+  .login-error{
+    color:var(--red);font-size:12.5px;margin:-4px 0 14px;display:none;
+    background:rgba(239,106,95,0.08);border:1px solid rgba(239,106,95,0.25);
+    border-radius:6px;padding:8px 10px;text-align:center;
+  }
+  .login-box .btn{width:100%;padding:11px 18px;font-size:14.5px;}
+  .logout-btn{
+    background:none;border:1px solid var(--line-soft);color:var(--text-mid);
+    font-family:var(--mono);font-size:11px;cursor:pointer;padding:5px 10px;
+    border-radius:6px;
+  }
+  .logout-btn:hover{color:var(--red);border-color:var(--red);}
+
+  /* ---- Sold panel (read-only history of closed trades) ---- */
+  .sold-panel .panel-title{padding:18px 20px 0 20px;margin-bottom:14px;}
+  .sold-panel .panel-title small{color:var(--text-low);font-weight:500;font-family:var(--sans);margin-right:8px;}
+
+  /* ---- Chart panel (Pie chart) ---- */
+  .chart-panel .panel-title small{color:var(--text-low);font-weight:500;font-family:var(--sans);margin-right:8px;}
+  .pie-chart-wrap{display:flex;align-items:center;gap:36px;flex-wrap:wrap;padding:10px 4px;}
+  .pie-holder{position:relative;width:190px;height:190px;flex:0 0 auto;}
+  .pie{
+    width:190px;height:190px;border-radius:50%;
+    box-shadow:0 8px 26px rgba(0,0,0,0.35);
+    transition:background .3s ease;
+  }
+  .pie-center{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:108px;height:108px;border-radius:50%;background:var(--bg-panel);
+    border:1px solid var(--line-soft);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;
+  }
+  .pie-center .pc-label{font-size:10.5px;color:var(--text-low);font-family:var(--mono);}
+  .pie-center .pc-value{font-size:14px;font-weight:700;color:var(--gold-soft);font-family:var(--mono);margin-top:4px;}
+  .pie-legend{flex:1 1 260px;min-width:220px;display:flex;flex-direction:column;gap:2px;max-height:220px;overflow-y:auto;}
+  .legend-item{
+    display:grid;grid-template-columns:10px 1fr auto auto;gap:10px;align-items:center;
+    padding:8px 4px;border-bottom:1px solid var(--line-soft);
+  }
+  .legend-item:last-child{border-bottom:none;}
+  .legend-dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto;}
+  .legend-token{font-weight:700;font-size:13.5px;}
+  .legend-pct{font-family:var(--mono);font-size:13px;color:var(--gold-soft);font-weight:700;text-align:left;}
+  .legend-amt{font-family:var(--mono);font-size:12px;color:var(--text-low);text-align:left;}
+  .chart-empty{color:var(--text-low);font-size:13px;text-align:center;padding:20px 0;}
+
+  @media (max-width:900px){
+    form.entry{grid-template-columns:1fr 1fr;}
+    .summary{grid-template-columns:1fr 1fr;}
+    body{padding:18px;}
+    table{font-size:12.5px;}
+    thead th, tbody td{padding:9px 8px;}
+    .datepicker-popup{right:auto;left:0;}
+    .pie-chart-wrap{justify-content:center;}
+    .pie-holder{width:160px;height:160px;}
+    .pie{width:160px;height:160px;}
+    .pie-center{width:92px;height:92px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- Login popup gate -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <div class="login-eyebrow">Token Ledger · دسترسی محدود</div>
+    <h3>برای ورود، اطلاعات حساب را وارد کنید</h3>
+    <form id="loginForm" autocomplete="off">
+      <div class="login-field">
+        <label>نام کاربری</label>
+        <input type="text" id="loginUser" autocomplete="username" required>
+      </div>
+      <div class="login-field">
+        <label>رمز عبور</label>
+        <input type="password" id="loginPass" autocomplete="current-password" required>
+      </div>
+      <div class="login-error" id="loginError">نام کاربری یا رمز عبور نادرست است.</div>
+      <button type="submit" class="btn btn-primary">ورود</button>
+    </form>
+  </div>
+</div>
+
+<div class="wrap" id="appWrap" style="display:none;">
+
+  <header>
+    <div>
+      <div class="brand-eyebrow">Token Ledger · دفتر شخصی</div>
+      <h1>مدیریت حساب توکن</h1>
+      <div class="subtitle">ثبت خرید و فروش، ردیابی سود و زیان — یک اپ مستقل و آفلاین روی کامپیوتر شما</div>
+    </div>
+    <div class="ledger-mark">
+      <span id="todayMark"></span>
+      <div class="storage-line">
+        <span>محل ذخیره: <span class="path" id="storagePathLabel">در حال بارگذاری…</span></span>
+        <button class="link-btn" id="changeStorageBtn" style="display:none;">تغییر</button>
+      </div>
+      <div class="storage-line">
+        <button class="logout-btn" id="changeCredBtn">تغییر یوزر/پسورد</button>
+        <button class="logout-btn" id="logoutBtn">خروج از حساب</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="summary">
+    <div class="stat">
+      <div class="label">تعداد معاملات</div>
+      <div class="value" id="statCount">۰</div>
+    </div>
+    <div class="stat">
+      <div class="label">مجموع سرمایه‌گذاری</div>
+      <div class="value" id="statInvested">$۰</div>
+    </div>
+    <div class="stat">
+      <div class="label">مجموع بازگشتی (فروش‌شده)</div>
+      <div class="value" id="statReturned">$۰</div>
+    </div>
+    <div class="stat" id="statPLBox">
+      <div class="label">سود / زیان کل</div>
+      <div class="value" id="statPL">$۰</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">افزودن معامله جدید</div>
+    <form class="entry" id="entryForm">
+      <div class="field">
+        <label>نام توکن</label>
+        <input type="text" id="fToken" placeholder="مثال: BTC" required>
+      </div>
+      <div class="field" id="buyDateField">
+        <label>تاریخ خرید</label>
+        <input type="text" id="fDateDisplay" class="date-display" placeholder="انتخاب تاریخ" readonly required>
+        <input type="hidden" id="fDate">
+      </div>
+      <div class="field" id="sellDateField">
+        <label>تاریخ فروش</label>
+        <input type="text" id="fSellDateDisplay" class="date-display" placeholder="اختیاری" readonly>
+        <input type="hidden" id="fSellDate">
+      </div>
+      <div class="field">
+        <label>تعداد توکن</label>
+        <input type="number" id="fQty" step="any" min="0" placeholder="مثال: 1" required>
+      </div>
+      <div class="field">
+        <label>قیمت خرید ($)</label>
+        <input type="number" id="fBuy" step="any" min="0" placeholder="0.00" required>
+      </div>
+      <div class="field">
+        <label>قیمت فروش ($)</label>
+        <input type="number" id="fSell" step="any" min="0" placeholder="اختیاری">
+      </div>
+      <div class="field">
+        <button type="submit" class="btn btn-primary" style="width:100%;">ثبت ردیف</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" class="search" id="searchBox" placeholder="جستجوی نام توکن…">
+    <div class="toolbar-actions">
+      <button class="btn btn-ghost" id="saveBtn">پشتیبان‌گیری (JSON)</button>
+      <button class="btn btn-ghost" id="importBtn">وارد کردن اطلاعات</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none;">
+      <button class="btn btn-ghost" id="exportBtn">خروجی CSV</button>
+      <button class="btn btn-danger" id="clearBtn">پاک‌کردن همه</button>
+    </div>
+  </div>
+
+  <div class="panel" style="padding:0;overflow:hidden;">
+    <table>
+      <thead>
+        <tr>
+          <th>ردیف</th>
+          <th>نام توکن</th>
+          <th>تاریخ خرید</th>
+          <th>تاریخ فروش</th>
+          <th class="num">تعداد</th>
+          <th class="num">قیمت خرید</th>
+          <th class="num">قیمت فروش</th>
+          <th class="num">سود / زیان</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <div class="glyph">◇</div>
+      <div><b>هنوز معامله‌ای ثبت نشده</b></div>
+      <div style="margin-top:4px;">اولین ردیف را از فرم بالا اضافه کنید</div>
+    </div>
+  </div>
+
+  <div class="panel sold-panel" style="padding:0;overflow:hidden;">
+    <div class="panel-title">لیست فروش‌ها <small>— پس از ثبت قیمت فروش، ردیف به این‌جا منتقل می‌شود و غیرقابل ویرایش یا حذف است</small></div>
+    <table>
+      <thead>
+        <tr>
+          <th>ردیف</th>
+          <th>نام توکن</th>
+          <th>تاریخ خرید</th>
+          <th>تاریخ فروش</th>
+          <th class="num">تعداد</th>
+          <th class="num">قیمت خرید</th>
+          <th class="num">قیمت فروش</th>
+          <th class="num">سود / زیان</th>
+          <th class="num">٪ از کل فروش</th>
+        </tr>
+      </thead>
+      <tbody id="soldTableBody"></tbody>
+    </table>
+    <div class="empty-state" id="soldEmptyState" style="display:none;">
+      <div class="glyph">◇</div>
+      <div><b>هنوز فروشی ثبت نشده</b></div>
+      <div style="margin-top:4px;">با ثبت قیمت فروش برای یک توکن، آن ردیف به این‌جا منتقل می‌شود</div>
+    </div>
+  </div>
+
+  <div class="panel chart-panel">
+    <div class="panel-title">درصد خرید هر توکن از کل <small>— سهم هر توکن از مجموع سرمایه‌گذاری (Pie Chart)</small></div>
+    <div class="pie-chart-wrap" id="pieWrap">
+      <div class="pie-holder">
+        <div class="pie" id="pieChart"></div>
+        <div class="pie-center">
+          <div class="pc-label">مجموع خرید</div>
+          <div class="pc-value" id="pieCenterTotal">$۰</div>
+        </div>
+      </div>
+      <div class="pie-legend" id="pieLegend"></div>
+    </div>
+    <div class="chart-empty" id="chartEmpty" style="display:none;">داده‌ای برای نمایش وجود ندارد</div>
+  </div>
+
+  <footer id="footerNote">ذخیره‌سازی محلی و آفلاین فعال است</footer>
+</div>
+
+<!-- Clear-all confirmation modal -->
+<div class="modal-overlay" id="clearModalOverlay">
+  <div class="modal-box">
+    <h3>⚠ حذف کامل اطلاعات</h3>
+    <p>
+      این عملیات <b>تمام معاملات ثبت‌شده</b> را برای همیشه پاک می‌کند و
+      قابل بازگشت نیست. برای تأیید، عبارت
+      <span class="confirm-word">حذف همه</span> را دقیقاً در کادر زیر تایپ کنید.
+    </p>
+    <input type="text" id="clearConfirmInput" placeholder="اینجا تایپ کنید…" autocomplete="off">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="clearCancelBtn">انصراف</button>
+      <button class="btn btn-danger" id="clearConfirmBtn" disabled>پاک کردن همه</button>
+    </div>
+  </div>
+</div>
+
+<!-- Change username/password modal -->
+<div class="modal-overlay" id="credModalOverlay">
+  <div class="modal-box gold">
+    <h3>🔑 تغییر نام کاربری و رمز عبور</h3>
+    <p>برای تغییر اطلاعات ورود، ابتدا رمز عبور فعلی را وارد کنید.</p>
+    <div class="login-field">
+      <label>رمز عبور فعلی</label>
+      <input type="password" id="credCurrentPass" autocomplete="current-password">
+    </div>
+    <div class="login-field">
+      <label>نام کاربری جدید</label>
+      <input type="text" id="credNewUser" autocomplete="username">
+    </div>
+    <div class="login-field">
+      <label>رمز عبور جدید</label>
+      <input type="password" id="credNewPass" autocomplete="new-password">
+    </div>
+    <div class="login-field">
+      <label>تکرار رمز عبور جدید</label>
+      <input type="password" id="credNewPass2" autocomplete="new-password">
+    </div>
+    <div class="login-error" id="credError"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="credCancelBtn">انصراف</button>
+      <button class="btn btn-primary" id="credSaveBtn">ذخیره تغییرات</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------------- Simple login gate ----------------
+   این یک قفل ساده سمت مرورگر/دسکتاپ است (مناسب برای جلوگیری از دسترسی افراد دیگر
+   روی همین سیستم)، نه یک سامانه امنیتی سرور-محور.
+   نام کاربری/رمز عبور پیش‌فرض فقط بار اول استفاده می‌شود؛ بعد از آن با دکمهٔ
+   «تغییر یوزر/پسورد» داخل برنامه قابل تغییر است و آن مقدار جدید ذخیره و همیشه
+   استفاده می‌شود (دیگر نیازی به ویرایش این فایل نیست). */
+const DEFAULT_AUTH_USERNAME = 'admin';
+const DEFAULT_AUTH_PASSWORD = 'change-me-1234';
+const AUTH_SESSION_KEY = 'token_ledger_auth_ok_v1';
+const AUTH_CREDS_LOCAL_KEY = 'token_ledger_auth_creds_v1';
+
+let entries = [];
+let searchTerm = '';
+let storagePath = null;
+const isElectron = !!(window.api);
+
+/* Reads the currently active username/password, whether from the desktop
+   app's config file (Electron) or from the browser's localStorage. Falls
+   back to the defaults above only if nothing has been saved yet. */
+async function getCredentials(){
+  if(isElectron && window.api.getCredentials){
+    try{
+      const stored = await window.api.getCredentials();
+      if(stored && stored.username && stored.password) return stored;
+    }catch(e){}
+  } else {
+    try{
+      const raw = localStorage.getItem(AUTH_CREDS_LOCAL_KEY);
+      if(raw){
+        const parsed = JSON.parse(raw);
+        if(parsed && parsed.username && parsed.password) return parsed;
+      }
+    }catch(e){}
+  }
+  return { username: DEFAULT_AUTH_USERNAME, password: DEFAULT_AUTH_PASSWORD };
+}
+
+async function saveCredentials(username, password){
+  if(isElectron && window.api.saveCredentials){
+    await window.api.saveCredentials({ username, password });
+  } else {
+    try{ localStorage.setItem(AUTH_CREDS_LOCAL_KEY, JSON.stringify({ username, password })); }
+    catch(e){ console.error('ذخیره‌سازی اطلاعات ورود ناموفق بود', e); }
+  }
+}
+
+
+/* ---------------- Storage layer (Electron IPC, fallback to localStorage) ---------------- */
+const LOCAL_KEY = 'token_ledger_entries_v1';
+
+async function loadEntries(){
+  if(isElectron){
+    try{ entries = await window.api.loadData(); if(!Array.isArray(entries)) entries = []; }
+    catch(e){ entries = []; }
+  } else {
+    try{
+      const raw = localStorage.getItem(LOCAL_KEY);
+      entries = raw ? JSON.parse(raw) : [];
+    }catch(e){ entries = []; }
+  }
+}
+async function saveEntries(){
+  if(isElectron){
+    try{ await window.api.saveData(entries); }
+    catch(e){ console.error('ذخیره‌سازی ناموفق بود', e); }
+  } else {
+    try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(entries)); }
+    catch(e){ console.error('ذخیره‌سازی ناموفق بود', e); }
+  }
+}
+
+async function initStorageUI(){
+  const label = document.getElementById('storagePathLabel');
+  const changeBtn = document.getElementById('changeStorageBtn');
+  const footerNote = document.getElementById('footerNote');
+  if(isElectron){
+    changeBtn.style.display = 'inline';
+    footerNote.textContent = 'داده‌ها فقط به‌صورت آفلاین روی همین کامپیوتر، در فایل انتخابی شما ذخیره می‌شوند.';
+    try{
+      storagePath = await window.api.getStoragePath();
+      label.textContent = storagePath || 'در حال تنظیم…';
+    }catch(e){ label.textContent = 'نامشخص'; }
+    window.api.onStoragePathUpdated((p) => {
+      storagePath = p;
+      label.textContent = p;
+    });
+    changeBtn.addEventListener('click', async () => {
+      const res = await window.api.chooseFolder();
+      if(res && res.changed){
+        storagePath = res.path;
+        label.textContent = res.path;
+        alert('محل ذخیره‌سازی تغییر کرد. اطلاعات قبلی نیز منتقل شد.');
+        await loadEntries();
+        render();
+      }
+    });
+  } else {
+    label.textContent = 'حافظه محلی مرورگر (localStorage)';
+    footerNote.textContent = 'برای ذخیره‌سازی فایل روی سیستم و انتخاب پوشه، اپ را به‌صورت مستقل (Electron) اجرا کنید.';
+  }
+}
+
+/* ---------------- Formatting helpers ---------------- */
+function fmtMoney(n){
+  const num = Number(n);
+  const sign = num < 0 ? '-' : '';
+  return sign + '$' + Math.abs(num).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function fmtDate(iso){
+  if(!iso) return '—';
+  const parts = iso.split('-').map(Number);
+  if(parts.length !== 3 || parts.some(isNaN)) return iso;
+  const [gy, gm, gd] = parts;
+  const [jy, jm, jd] = g2j(gy, gm, gd);
+  return `${toFaDigits(jy)}/${toFaDigits(String(jm).padStart(2,'0'))}/${toFaDigits(String(jd).padStart(2,'0'))}`;
+}
+function fmtJalaliLong(gy, gm, gd){
+  const [jy, jm, jd] = g2j(gy, gm, gd);
+  return `${toFaDigits(jd)} ${MONTH_NAMES_FA[jm - 1]} ${toFaDigits(jy)}`;
+}
+function toISO(y,m,d){
+  const mm = String(m+1).padStart(2,'0');
+  const dd = String(d).padStart(2,'0');
+  return `${y}-${mm}-${dd}`;
+}
+function computePL(buy, sell, qty){
+  if(sell === null || sell === undefined || sell === '') return null;
+  const q = Number(qty) || 0;
+  return (Number(sell) - Number(buy)) * q;
+}
+function holdDays(buyIso, sellIso){
+  if(!buyIso || !sellIso) return null;
+  const a = new Date(buyIso + 'T00:00:00');
+  const b = new Date(sellIso + 'T00:00:00');
+  if(isNaN(a) || isNaN(b)) return null;
+  return Math.round((b - a) / 86400000);
+}
+
+/* ---------------- Custom date picker popup (Jalali / Shamsi calendar) ---------------- */
+const PERSIAN_DOW = ['ش','ی','د','س','چ','پ','ج']; // starting Saturday
+const MONTH_NAMES_FA = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+function toFaDigits(n){ return String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]); }
+
+/* Jalali <-> Gregorian conversion (civil-calendar algorithm). Storage stays
+   Gregorian ISO (yyyy-mm-dd) internally; everything shown to the user is Jalali. */
+function _div(a, b){ return Math.floor(a / b); }
+function g2j(gy, gm, gd){
+  const g_d_m = [0,31,59,90,120,151,181,212,243,273,304,334];
+  const gy2 = (gm > 2) ? (gy + 1) : gy;
+  let days = 355666 + (365 * gy) + _div(gy2 + 3, 4) - _div(gy2 + 99, 100) + _div(gy2 + 399, 400) + gd + g_d_m[gm - 1];
+  let jy = -1595 + (33 * _div(days, 12053));
+  days %= 12053;
+  jy += 4 * _div(days, 1461);
+  days %= 1461;
+  if(days > 365){
+    jy += _div(days - 1, 365);
+    days = (days - 1) % 365;
+  }
+  let jm, jd;
+  if(days < 186){
+    jm = 1 + _div(days, 31);
+    jd = 1 + (days % 31);
+  } else {
+    jm = 7 + _div(days - 186, 30);
+    jd = 1 + ((days - 186) % 30);
+  }
+  return [jy, jm, jd];
+}
+function j2g(jy, jm, jd){
+  jy += 1595;
+  let days = -355668 + (365 * jy) + (_div(jy, 33) * 8) + _div(((jy % 33) + 3), 4) + jd + ((jm < 7) ? (jm - 1) * 31 : ((jm - 7) * 30) + 186);
+  let gy = 400 * _div(days, 146097);
+  days %= 146097;
+  if(days > 36524){
+    days--;
+    gy += 100 * _div(days, 36524);
+    days %= 36524;
+    if(days >= 365) days++;
+  }
+  gy += 4 * _div(days, 1461);
+  days %= 1461;
+  if(days > 365){
+    gy += _div(days - 1, 365);
+    days = (days - 1) % 365;
+  }
+  let gd = days + 1;
+  const sal_a = [0,31, ((gy % 4 === 0 && gy % 100 !== 0) || (gy % 400 === 0)) ? 29 : 28, 31,30,31,30,31,31,30,31,30,31];
+  let gm;
+  for(gm = 1; gm <= 12 && gd > sal_a[gm]; gm++) gd -= sal_a[gm];
+  return [gy, gm, gd];
+}
+function jalaliMonthLength(jy, jm){
+  const [gy1, gm1, gd1] = j2g(jy, jm, 1);
+  const ny = jm === 12 ? jy + 1 : jy;
+  const nm = jm === 12 ? 1 : jm + 1;
+  const [gy2, gm2, gd2] = j2g(ny, nm, 1);
+  const d1 = Date.UTC(gy1, gm1 - 1, gd1);
+  const d2 = Date.UTC(gy2, gm2 - 1, gd2);
+  return Math.round((d2 - d1) / 86400000);
+}
+function isoToJalali(iso){
+  const [gy, gm, gd] = iso.split('-').map(Number);
+  return g2j(gy, gm, gd);
+}
+function jalaliToIso(jy, jm, jd){
+  const [gy, gm, gd] = j2g(jy, jm, jd);
+  return toISO(gy, gm - 1, gd);
+}
+
+function createDatePicker(displayId, hiddenId){
+  const displayEl = document.getElementById(displayId);
+  const hiddenEl = document.getElementById(hiddenId);
+  const field = displayEl.closest('.field');
+
+  const popup = document.createElement('div');
+  popup.className = 'datepicker-popup';
+  field.appendChild(popup);
+
+  let viewYear, viewMonth; // Jalali year / 1-indexed Jalali month (internal storage stays Gregorian ISO)
+
+  function open(){
+    let jy, jm;
+    if(hiddenEl.value){
+      [jy, jm] = isoToJalali(hiddenEl.value);
+    } else {
+      const now = new Date();
+      [jy, jm] = g2j(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    }
+    viewYear = jy;
+    viewMonth = jm;
+    renderCalendar();
+    popup.classList.add('open');
+    document.addEventListener('click', outsideClick, true);
+  }
+  function close(){
+    popup.classList.remove('open');
+    document.removeEventListener('click', outsideClick, true);
+  }
+  function outsideClick(ev){
+    if(!popup.contains(ev.target) && ev.target !== displayEl) close();
+  }
+  function renderCalendar(){
+    const [firstGy, firstGm, firstGd] = j2g(viewYear, viewMonth, 1);
+    const startOffset = (new Date(firstGy, firstGm - 1, firstGd).getDay() + 1) % 7; // 0 = Saturday
+    const daysInMonth = jalaliMonthLength(viewYear, viewMonth);
+    const prevJy = viewMonth === 1 ? viewYear - 1 : viewYear;
+    const prevJm = viewMonth === 1 ? 12 : viewMonth - 1;
+    const daysInPrevMonth = jalaliMonthLength(prevJy, prevJm);
+    const now = new Date();
+    const todayISO = toISO(now.getFullYear(), now.getMonth(), now.getDate());
+
+    let cells = '';
+    for(let i=0;i<startOffset;i++){
+      const d = daysInPrevMonth - startOffset + 1 + i;
+      cells += `<div class="dp-day muted">${toFaDigits(d)}</div>`;
+    }
+    for(let d=1; d<=daysInMonth; d++){
+      const iso = jalaliToIso(viewYear, viewMonth, d);
+      const cls = ['dp-day'];
+      if(iso === todayISO) cls.push('today');
+      if(hiddenEl.value === iso) cls.push('selected');
+      cells += `<div class="${cls.join(' ')}" data-iso="${iso}">${toFaDigits(d)}</div>`;
+    }
+    const totalCells = startOffset + daysInMonth;
+    const trailing = (7 - (totalCells % 7)) % 7;
+    for(let d=1; d<=trailing; d++){
+      cells += `<div class="dp-day muted">${toFaDigits(d)}</div>`;
+    }
+
+    popup.innerHTML = `
+      <div class="dp-head">
+        <button type="button" class="dp-nav" data-nav="prev">‹</button>
+        <div class="dp-title">${MONTH_NAMES_FA[viewMonth - 1]} ${toFaDigits(viewYear)}</div>
+        <button type="button" class="dp-nav" data-nav="next">›</button>
+      </div>
+      <div class="dp-grid">
+        ${PERSIAN_DOW.map(d => `<div class="dp-dow">${d}</div>`).join('')}
+        ${cells}
+      </div>
+      <button type="button" class="dp-clear">پاک کردن تاریخ</button>
+    `;
+
+    popup.querySelector('[data-nav="prev"]').addEventListener('click', () => {
+      viewMonth--; if(viewMonth < 1){ viewMonth = 12; viewYear--; } renderCalendar();
+    });
+    popup.querySelector('[data-nav="next"]').addEventListener('click', () => {
+      viewMonth++; if(viewMonth > 12){ viewMonth = 1; viewYear++; } renderCalendar();
+    });
+    popup.querySelectorAll('.dp-day[data-iso]').forEach(el => {
+      el.addEventListener('click', () => {
+        hiddenEl.value = el.dataset.iso;
+        displayEl.value = fmtDate(el.dataset.iso);
+        close();
+      });
+    });
+    popup.querySelector('.dp-clear').addEventListener('click', () => {
+      hiddenEl.value = '';
+      displayEl.value = '';
+      close();
+    });
+  }
+
+  displayEl.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    if(popup.classList.contains('open')) close(); else open();
+  });
+
+  return { setValue(iso){ hiddenEl.value = iso || ''; displayEl.value = iso ? fmtDate(iso) : ''; } };
+}
+
+const buyDatePicker = createDatePicker('fDateDisplay', 'fDate');
+const sellDatePicker = createDatePicker('fSellDateDisplay', 'fSellDate');
+
+/* ---------------- Rendering ---------------- */
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function isSold(e){
+  return e.sell !== null && e.sell !== undefined && e.sell !== '';
+}
+
+function render(){
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+  tbody.innerHTML = '';
+
+  const term = searchTerm.toLowerCase();
+  const withIdx = entries.map((e, i) => ({...e, _idx:i}));
+
+  const openEntries = withIdx.filter(e => !isSold(e));
+  const soldEntries = withIdx.filter(isSold);
+
+  const openFiltered = openEntries.filter(e => e.token.toLowerCase().includes(term));
+  empty.style.display = openEntries.length === 0 ? 'block' : 'none';
+
+  openFiltered.forEach((e, displayIdx) => {
+    const qty = Number(e.qty) || 0;
+    const tr = document.createElement('tr');
+
+    tr.innerHTML = `
+      <td class="row-idx">${displayIdx + 1}</td>
+      <td class="token-name"><span class="dot"></span>${escapeHtml(e.token)}</td>
+      <td class="date-cell">${fmtDate(e.date)}</td>
+      <td class="date-cell"><span class="pl-open">—</span></td>
+      <td class="num price">${qty.toLocaleString('en-US', {maximumFractionDigits:8})}</td>
+      <td class="num price">${fmtMoney(e.buy)}</td>
+      <td class="num price"><span class="pl-open">—</span></td>
+      <td class="num"><span class="pl-open">— باز</span></td>
+      <td class="row-actions">
+        <button class="icon-btn edit" data-idx="${e._idx}" title="ویرایش">✎</button>
+        <button class="icon-btn del" data-idx="${e._idx}" title="حذف">✕</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  tbody.querySelectorAll('.del').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const idx = Number(btn.dataset.idx);
+      if(confirm('این ردیف حذف شود؟')){
+        entries.splice(idx, 1);
+        await saveEntries();
+        render();
+      }
+    });
+  });
+  tbody.querySelectorAll('.edit').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const idx = Number(btn.dataset.idx);
+      const e = entries[idx];
+      document.getElementById('fToken').value = e.token;
+      buyDatePicker.setValue(e.date);
+      sellDatePicker.setValue(e.sellDate);
+      document.getElementById('fQty').value = e.qty ?? '';
+      document.getElementById('fBuy').value = e.buy;
+      document.getElementById('fSell').value = e.sell ?? '';
+      entries.splice(idx, 1);
+      await saveEntries();
+      render();
+      document.getElementById('fToken').focus();
+    });
+  });
+
+  renderSoldTable(soldEntries, term);
+  updateSummary();
+  renderChart();
+}
+
+/* Read-only "sold list" — rows land here automatically once a sell price is
+   recorded, and cannot be edited or deleted from here. */
+function renderSoldTable(soldEntries, term){
+  const tbody = document.getElementById('soldTableBody');
+  const empty = document.getElementById('soldEmptyState');
+  tbody.innerHTML = '';
+  empty.style.display = soldEntries.length === 0 ? 'block' : 'none';
+
+  // Total sold value across ALL closed trades (not affected by search),
+  // used as the denominator for each token's share of total sales.
+  let totalSoldValue = 0;
+  soldEntries.forEach(e => {
+    totalSoldValue += Number(e.sell) * (Number(e.qty) || 0);
+  });
+
+  const filtered = soldEntries.filter(e => e.token.toLowerCase().includes(term));
+
+  filtered.forEach((e, displayIdx) => {
+    const qty = Number(e.qty) || 0;
+    const pl = computePL(e.buy, e.sell, qty);
+    const costBasis = Number(e.buy) * qty;
+    const pct = costBasis !== 0 ? (pl / costBasis * 100) : null;
+    const soldValue = Number(e.sell) * qty;
+    const sharePct = totalSoldValue > 0 ? (soldValue / totalSoldValue * 100) : 0;
+    const days = holdDays(e.date, e.sellDate);
+    const cls = pl >= 0 ? 'pl-pos' : 'pl-neg';
+    const arrow = pl >= 0 ? '▲' : '▼';
+
+    let plHtml = `<span class="pl-cell ${cls}">${arrow} ${fmtMoney(pl)}</span>`;
+    if(pct !== null){
+      plHtml += `<span class="pct ${cls}">${pct >= 0 ? '+' : ''}${pct.toFixed(1)}٪</span>`;
+    }
+    if(days !== null){
+      plHtml += `<span class="hold-days">مدت نگهداری: ${toFaDigits(days)} روز</span>`;
+    }
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="row-idx">${displayIdx + 1}</td>
+      <td class="token-name"><span class="dot"></span>${escapeHtml(e.token)}</td>
+      <td class="date-cell">${fmtDate(e.date)}</td>
+      <td class="date-cell">${e.sellDate ? fmtDate(e.sellDate) : '<span class="pl-open">—</span>'}</td>
+      <td class="num price">${qty.toLocaleString('en-US', {maximumFractionDigits:8})}</td>
+      <td class="num price">${fmtMoney(e.buy)}</td>
+      <td class="num price">${fmtMoney(e.sell)}</td>
+      <td class="num">${plHtml}</td>
+      <td class="num price">${sharePct.toFixed(1)}٪</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function updateSummary(){
+  const count = entries.length;
+  let invested = 0, returned = 0, pl = 0;
+  entries.forEach(e => {
+    const q = Number(e.qty) || 0;
+    invested += (Number(e.buy) || 0) * q;
+    if(e.sell !== null && e.sell !== '' && e.sell !== undefined){
+      returned += Number(e.sell) * q;
+      pl += (Number(e.sell) - Number(e.buy)) * q;
+    }
+  });
+  document.getElementById('statCount').textContent = toFaDigits(count);
+  document.getElementById('statInvested').textContent = fmtMoney(invested);
+  document.getElementById('statReturned').textContent = fmtMoney(returned);
+  const plBox = document.getElementById('statPLBox');
+  const plEl = document.getElementById('statPL');
+  plEl.textContent = fmtMoney(pl);
+  plBox.classList.remove('pos','neg');
+  plBox.classList.add(pl >= 0 ? 'pos' : 'neg');
+}
+
+/* ---------------- Per-token purchase-share pie chart ---------------- */
+const PIE_PALETTE = ['#d4af6a','#3ecf8e','#ef6a5f','#6a9fd4','#c46ad4','#d4d06a','#6ad4b8','#d48a6a','#8a6ad4','#5fbfe0','#e07a9a','#9fd46a'];
+
+function renderChart(){
+  const pieEl = document.getElementById('pieChart');
+  const legendEl = document.getElementById('pieLegend');
+  const emptyEl = document.getElementById('chartEmpty');
+  const wrapEl = document.getElementById('pieWrap');
+  const centerTotalEl = document.getElementById('pieCenterTotal');
+
+  const map = {};
+  let total = 0;
+  entries.forEach(e => {
+    const key = e.token.trim().toUpperCase();
+    const invested = (Number(e.buy) || 0) * (Number(e.qty) || 0);
+    map[key] = (map[key] || 0) + invested;
+    total += invested;
+  });
+
+  centerTotalEl.textContent = fmtMoney(total);
+
+  const tokens = Object.keys(map).sort((a, b) => map[b] - map[a]);
+  if(tokens.length === 0 || total <= 0){
+    pieEl.style.background = 'var(--bg-panel-2)';
+    legendEl.innerHTML = '';
+    wrapEl.style.display = 'none';
+    emptyEl.style.display = 'block';
+    return;
+  }
+  wrapEl.style.display = 'flex';
+  emptyEl.style.display = 'none';
+
+  let cursor = 0;
+  const gradientParts = [];
+  const legendParts = [];
+  tokens.forEach((tok, i) => {
+    const value = map[tok];
+    const pct = (value / total) * 100;
+    const color = PIE_PALETTE[i % PIE_PALETTE.length];
+    const start = cursor;
+    const end = cursor + pct;
+    gradientParts.push(`${color} ${start.toFixed(3)}% ${end.toFixed(3)}%`);
+    cursor = end;
+    legendParts.push(`
+      <div class="legend-item">
+        <span class="legend-dot" style="background:${color};"></span>
+        <span class="legend-token">${escapeHtml(tok)}</span>
+        <span class="legend-amt">${fmtMoney(value)}</span>
+        <span class="legend-pct">${pct.toFixed(1)}٪</span>
+      </div>
+    `);
+  });
+
+  pieEl.style.background = `conic-gradient(${gradientParts.join(', ')})`;
+  legendEl.innerHTML = legendParts.join('');
+}
+
+/* ---------------- Form submit ---------------- */
+document.getElementById('entryForm').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const token = document.getElementById('fToken').value.trim();
+  const date = document.getElementById('fDate').value;
+  const sellDate = document.getElementById('fSellDate').value || null;
+  const qty = document.getElementById('fQty').value;
+  const buy = document.getElementById('fBuy').value;
+  const sellRaw = document.getElementById('fSell').value;
+  if(!token || !date || qty === '' || buy === '') return;
+
+  entries.push({
+    token,
+    date,
+    sellDate,
+    qty: Number(qty),
+    buy: Number(buy),
+    sell: sellRaw === '' ? null : Number(sellRaw)
+  });
+  await saveEntries();
+  render();
+  ev.target.reset();
+  buyDatePicker.setValue('');
+  sellDatePicker.setValue('');
+  document.getElementById('fToken').focus();
+});
+
+document.getElementById('searchBox').addEventListener('input', (ev) => {
+  searchTerm = ev.target.value;
+  render();
+});
+
+/* ---------------- Clear-all with typed confirmation ---------------- */
+const CLEAR_PHRASE = 'حذف همه';
+const clearOverlay = document.getElementById('clearModalOverlay');
+const clearInput = document.getElementById('clearConfirmInput');
+const clearConfirmBtn = document.getElementById('clearConfirmBtn');
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  if(entries.length === 0) return;
+  clearInput.value = '';
+  clearConfirmBtn.disabled = true;
+  clearOverlay.classList.add('open');
+  setTimeout(() => clearInput.focus(), 50);
+});
+document.getElementById('clearCancelBtn').addEventListener('click', () => {
+  clearOverlay.classList.remove('open');
+});
+clearOverlay.addEventListener('click', (ev) => {
+  if(ev.target === clearOverlay) clearOverlay.classList.remove('open');
+});
+clearInput.addEventListener('input', () => {
+  clearConfirmBtn.disabled = clearInput.value.trim() !== CLEAR_PHRASE;
+});
+clearConfirmBtn.addEventListener('click', async () => {
+  if(clearInput.value.trim() !== CLEAR_PHRASE) return;
+  entries = [];
+  await saveEntries();
+  render();
+  clearOverlay.classList.remove('open');
+});
+
+/* ---------------- Backup / import / export ---------------- */
+document.getElementById('saveBtn').addEventListener('click', () => {
+  if(entries.length === 0){ alert('هیچ داده‌ای برای ذخیره وجود ندارد.'); return; }
+  const payload = {
+    app: 'token-ledger',
+    version: 2,
+    exportedAt: new Date().toISOString(),
+    entries: entries
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const stamp = new Date().toISOString().slice(0,10);
+  a.download = `token-ledger-backup-${stamp}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('importBtn').addEventListener('click', () => {
+  document.getElementById('importFile').click();
+});
+
+document.getElementById('importFile').addEventListener('change', (ev) => {
+  const file = ev.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try{
+      const data = JSON.parse(e.target.result);
+      const incoming = Array.isArray(data) ? data : data.entries;
+      if(!Array.isArray(incoming)) throw new Error('فرمت فایل نامعتبر است');
+
+      const cleaned = incoming
+        .filter(x => x && x.token && x.date && x.buy !== undefined)
+        .map(x => ({
+          token: String(x.token),
+          date: x.date,
+          sellDate: x.sellDate || null,
+          qty: (x.qty === '' || x.qty === undefined || x.qty === null) ? 1 : Number(x.qty),
+          buy: Number(x.buy),
+          sell: (x.sell === '' || x.sell === undefined || x.sell === null) ? null : Number(x.sell)
+        }));
+
+      if(cleaned.length === 0){ alert('هیچ ردیف معتبری در فایل پیدا نشد.'); return; }
+
+      let replace = true;
+      if(entries.length > 0){
+        replace = confirm(
+          `${cleaned.length} ردیف در فایل پیدا شد.\n\n` +
+          `برای «جایگزینی کامل» اطلاعات فعلی، روی OK بزنید.\n` +
+          `برای «افزودن» به اطلاعات فعلی، روی Cancel بزنید.`
+        );
+      }
+
+      entries = replace ? cleaned : entries.concat(cleaned);
+      await saveEntries();
+      render();
+      alert('اطلاعات با موفقیت وارد شد.');
+    }catch(err){
+      alert('خطا در خواندن فایل: ' + err.message);
+    }finally{
+      ev.target.value = '';
+    }
+  };
+  reader.readAsText(file, 'utf-8');
+});
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+  if(entries.length === 0){ alert('هیچ داده‌ای برای خروجی وجود ندارد.'); return; }
+  let csv = 'ردیف,نام توکن,تاریخ خرید,تاریخ فروش,تعداد,قیمت خرید,قیمت فروش,سود/زیان\n';
+  entries.forEach((e, i) => {
+    const pl = computePL(e.buy, e.sell, e.qty);
+    csv += `${i+1},${e.token},${e.date},${e.sellDate ?? ''},${e.qty ?? ''},${e.buy},${e.sell ?? ''},${pl ?? ''}\n`;
+  });
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'token-ledger.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+/* ---------------- Init ---------------- */
+(function(){
+  const _now = new Date();
+  document.getElementById('todayMark').innerHTML =
+    '<b>Ledger №</b> ' + Math.random().toString(36).slice(2,8).toUpperCase() +
+    '<br>' + fmtJalaliLong(_now.getFullYear(), _now.getMonth() + 1, _now.getDate());
+})();
+
+async function init(){
+  await initStorageUI();
+  await loadEntries();
+  const today = new Date();
+  buyDatePicker.setValue(toISO(today.getFullYear(), today.getMonth(), today.getDate()));
+  render();
+}
+
+/* ---------------- Login gate wiring ---------------- */
+const loginOverlay = document.getElementById('loginOverlay');
+const appWrap = document.getElementById('appWrap');
+
+function unlockApp(){
+  loginOverlay.classList.remove('open');
+  appWrap.style.display = '';
+  init();
+}
+
+function showLoginGate(){
+  appWrap.style.display = 'none';
+  loginOverlay.classList.add('open');
+  setTimeout(() => document.getElementById('loginUser').focus(), 50);
+}
+
+document.getElementById('loginForm').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const u = document.getElementById('loginUser').value;
+  const p = document.getElementById('loginPass').value;
+  const errBox = document.getElementById('loginError');
+  const creds = await getCredentials();
+  if(u === creds.username && p === creds.password){
+    errBox.style.display = 'none';
+    try{ sessionStorage.setItem(AUTH_SESSION_KEY, '1'); }catch(e){}
+    unlockApp();
+  } else {
+    errBox.style.display = 'block';
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginPass').focus();
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  try{ sessionStorage.removeItem(AUTH_SESSION_KEY); }catch(e){}
+  location.reload();
+});
+
+/* ---------------- Change username/password modal ---------------- */
+const credModalOverlay = document.getElementById('credModalOverlay');
+
+document.getElementById('changeCredBtn').addEventListener('click', () => {
+  document.getElementById('credCurrentPass').value = '';
+  document.getElementById('credNewUser').value = '';
+  document.getElementById('credNewPass').value = '';
+  document.getElementById('credNewPass2').value = '';
+  document.getElementById('credError').style.display = 'none';
+  credModalOverlay.classList.add('open');
+  setTimeout(() => document.getElementById('credCurrentPass').focus(), 50);
+});
+
+document.getElementById('credCancelBtn').addEventListener('click', () => {
+  credModalOverlay.classList.remove('open');
+});
+
+credModalOverlay.addEventListener('click', (ev) => {
+  if(ev.target === credModalOverlay) credModalOverlay.classList.remove('open');
+});
+
+document.getElementById('credSaveBtn').addEventListener('click', async () => {
+  const errBox = document.getElementById('credError');
+  const curPass = document.getElementById('credCurrentPass').value;
+  const newUser = document.getElementById('credNewUser').value.trim();
+  const newPass = document.getElementById('credNewPass').value;
+  const newPass2 = document.getElementById('credNewPass2').value;
+
+  const creds = await getCredentials();
+  if(curPass !== creds.password){
+    errBox.textContent = 'رمز عبور فعلی نادرست است.';
+    errBox.style.display = 'block';
+    return;
+  }
+  if(!newUser || !newPass){
+    errBox.textContent = 'نام کاربری و رمز عبور جدید نباید خالی باشند.';
+    errBox.style.display = 'block';
+    return;
+  }
+  if(newPass !== newPass2){
+    errBox.textContent = 'رمز عبور جدید و تکرار آن یکسان نیستند.';
+    errBox.style.display = 'block';
+    return;
+  }
+
+  await saveCredentials(newUser, newPass);
+  errBox.style.display = 'none';
+  credModalOverlay.classList.remove('open');
+  alert('نام کاربری و رمز عبور با موفقیت تغییر کرد. از این پس برای ورود از اطلاعات جدید استفاده کنید.');
+});
+
+(function bootAuth(){
+  let alreadyIn = false;
+  try{ alreadyIn = sessionStorage.getItem(AUTH_SESSION_KEY) === '1'; }catch(e){}
+  if(alreadyIn){ unlockApp(); } else { showLoginGate(); }
+})();
+</script>
+</body>
+</html>
