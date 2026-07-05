@@ -13,5 +13,7 @@ npm run dist
 امکان انتخاب پوشهٔ ذخیره‌سازی از داخل برنامه
 سورد قابل تغییر در index.html
 
+
 const AUTH_USERNAME = 'admin';
+
 const AUTH_PASSWORD = 'change-me-1234';
